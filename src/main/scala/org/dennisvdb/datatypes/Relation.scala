@@ -11,15 +11,8 @@ object Relation {
       x.domain === y.domain && x.relation === y.relation
   }
 
-  implicit def relationGraph[A]: GraphK[Relation, A] = new GraphK[Relation, A] {
-    override def empty: Relation[A] = Relation(Set.empty, Set.empty)
-
-    override def vertex(a: A): Relation[A] = Relation(Set(a), Set.empty)
-
-    override def overlay(r1: Relation[A], r2: Relation[A]): Relation[A] =
-      Relation(r1.domain ++ r2.domain, r1.relation ++ r2.relation)
-
-    override def connect(r1: Relation[A], r2: Relation[A]): Relation[A] = {
+  implicit val relationGraph: GraphK[Relation] = new GraphK[Relation] {
+    override def connect[A](r1: Relation[A], r2: Relation[A]): Relation[A] = {
       val newRelations = for {
         a <- r1.domain
         b <- r2.domain

@@ -1,7 +1,6 @@
 package org.dennisvdb.typeclasses
 
 import cats._
-import cats.data._
 import cats.implicits._
 import org.dennisvdb.datatypes.Tree
 import org.dennisvdb.datatypes.Tree.Forest
