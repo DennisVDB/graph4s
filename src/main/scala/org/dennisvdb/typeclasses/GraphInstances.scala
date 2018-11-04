@@ -1,3 +1,5 @@
-package org.dennisvdb.typeclasses object GraphInstances {
+package org.dennisvdb.typeclasses
+
+object GraphInstances {
 
 }
