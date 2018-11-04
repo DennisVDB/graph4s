@@ -1,7 +1,7 @@
 package org.dennisvdb.datatypes
 import cats._
 import cats.implicits._
-import org.dennisvdb.typeclasses.GraphClass
+import org.dennisvdb.typeclasses.GraphK
 
 final case class Relation[A](domain: Set[A], relation: Set[(A, A)])
 
@@ -11,9 +11,7 @@ object Relation {
       x.domain === y.domain && x.relation === y.relation
   }
 
-  implicit def relationGraph[A]: GraphClass[Relation[A]] = new GraphClass[Relation[A]] {
-    override type Vertex = A
-
+  implicit def relationGraph[A]: GraphK[Relation, A] = new GraphK[Relation, A] {
     override def empty: Relation[A] = Relation(Set.empty, Set.empty)
 
     override def vertex(a: A): Relation[A] = Relation(Set(a), Set.empty)
