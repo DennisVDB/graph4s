@@ -5,12 +5,14 @@ import org.dennisvdb.datatypes.Tree
 import org.dennisvdb.datatypes.Tree.Forest
 import simulacrum._
 
-@typeclass trait GraphK[G[_]] extends Alternative[G] { self =>
-  @op("-*-") def connect[A](g1: G[A], g2: G[A]): G[A]
+@typeclass trait GraphK[G[_]] extends CommutativeApplicative[G] with MonoidK[G] { self =>
+  def empty[A]: G[A] = ???
+
+  @op("-*-") def connect[A](ga1: G[A], ga2: G[A]): G[A]
 
   def vertex[A](a: A): G[A] = pure(a)
 
-  @op("-+-") def overlay[A](g1: G[A], g2: G[A]): G[A] = combineK(g1, g2)
+  @op("-+-") def overlay[A](ga1: G[A], ga2: G[A]): G[A] = combineK(ga1, ga2)
 
   def edge[A](a1: A, a2: A): G[A] = connect(vertex(a1), vertex(a2))
 
@@ -56,4 +58,24 @@ import simulacrum._
   def graph[V](vs: TraversableOnce[V], es: TraversableOnce[(V, V)]): G[V] = overlay(vertices(vs), edges(es))
 
   def isSubgraphOf[V](g1: G[V], g2: G[V])(implicit Eq: Eq[G[V]]): Boolean = Eq.eqv(overlay(g1, g2), g2)
+
+  def deBruijn[A](len: Int, alphabet: List[A]): G[List[A]] = {
+    val overlaps = List.fill(len - 2)(alphabet)
+
+    val skeleton = edges(for {
+      s <- overlaps
+    } yield (Left(s), Right(s)))
+
+    def expand(v: Either[List[A], List[A]]): List[A] =
+      for {
+        a <- alphabet
+        res <- v.fold(a :: _, _ :+ a)
+      } yield res
+
+    map(skeleton)(expand)
+  }
+}
+
+object GraphK {
+
 }
